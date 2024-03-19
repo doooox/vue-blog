@@ -1,6 +1,12 @@
 <template>
     <div v-if="post">
         <h1>{{ post.title }}</h1>
+        <small>By: {{ post.author.username }}</small>
+        <ul v-for="categories in post.categories" :key="categories.name">
+            <li>
+                {{ categories.name }}
+            </li>
+        </ul>
     </div>
     <div v-else>
         <p>Loading...</p>

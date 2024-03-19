@@ -3,11 +3,13 @@
         <h4 class="card-heading">{{ title }}</h4>
         <img :src="image" alt="" class="card-image">
         <button @click="viewPost">View</button>
+        <button @click="deletePost">X</button>
+        <button @click="updatePost">Edit</button>
     </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps,defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
 
 
@@ -23,13 +25,21 @@ const props = defineProps({
     },
     image:{
         type: String
-    }
+    },
 });
 
-const router = useRouter()
+const router = useRouter();
+const emit = defineEmits();
 
 const viewPost = () =>{
     router.push({name:'post', params:{postId: props.postId}})
+};
+
+const deletePost = () =>{
+    emit('deletePost', props.postId)
+}
+const updatePost = () =>{
+    router.push({name:'updatePost', params:{postId: props.postId}})
 };
 </script>
 

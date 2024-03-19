@@ -33,11 +33,8 @@ const error = ref('');
 const register = async () =>{
     try {
         await authStore.registerUser({username: username.value, email: email.value, password: password.value});
-
     } catch (error) {
-       console.log('====================================');
-       console.log(error);
-       console.log('====================================');
+      console.error(error);
     }
 };
 

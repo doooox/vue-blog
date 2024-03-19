@@ -14,8 +14,10 @@
 import InputComponent from '@/components/UI/InputComponent.vue';
 import { useBlogPostStore } from '@/stores/blogPostStore';
 import { onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 const postStore = useBlogPostStore();
+const router = useRouter()
 
 const categories = ref([]);
 const selectedCategories = ref([]);
@@ -45,13 +47,9 @@ const addPost = async () => {
   selectedCategories.value.forEach(categoryId => {
     formData.append('categories[]', categoryId);
   });
-
   try {
     await postStore.addBlogPost(formData);
-    title.value = '';
-    content.value = '';
-    image = null;
-    selectedCategories.value = []; // Clear selected categories after adding post
+    router.push('/')
   } catch (error) {
     console.error('Error adding post:', error);
   }

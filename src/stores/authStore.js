@@ -12,12 +12,10 @@ export const useAuthStore = defineStore("auth", {
       this.token = token;
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
-      console.log("User stored in localStorage:", user);
     },
     async registerUser(credentials) {
       try {
         const userData = await registerUser(credentials);
-        console.log(userData);
         this.setUserToLocalStorage(userData._id, userData.token);
       } catch (error) {
         console.error("Registration failed:", error.response.data.message);
@@ -27,7 +25,6 @@ export const useAuthStore = defineStore("auth", {
     async loginUser(credentials) {
       try {
         const userData = await loginUser(credentials);
-        console.log(credentials);
         this.setUserToLocalStorage(userData._id, userData.token);
       } catch (error) {
         console.error("Login failed:", error.response.data.message);
