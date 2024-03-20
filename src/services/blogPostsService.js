@@ -27,7 +27,10 @@ export const updatePost = async (postData, postId) => {
 export const removePost = async (postId) => {
   return await axiosInstance.delete(`/posts/delete/${postId}`);
 };
-export const filterByCategory = async (category) => {
-  const response = await axiosInstance.get(`/posts/${category}`);
+export const getPostsByCategory = async (categoryId, pageSize, page) => {
+  const queryParams = `?pageSize=${pageSize}&page=${page}`;
+  const response = await axiosInstance.get(
+    `/posts/filter/${categoryId}/${queryParams}`
+  );
   return response.data;
 };

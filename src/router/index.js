@@ -35,6 +35,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/filter/:categoryId",
+      name: "filteredPosts",
+      component: blogPostListView,
+      props: true,
+    },
+    {
       path: "/posts/:postId",
       name: "post",
       component: SinglePostView,

@@ -52,9 +52,10 @@
   watch(() => postStore.post, (postDetails) => {
     title.value = postDetails.title;
     content.value = postDetails.content;
-    selectedCategories.value = postDetails.categories;
+    selectedCategories.value = postDetails.categories.map(category => category._id);
     image = postDetails.imagePath;
-  });
+});
+
   
   const updatePost = async () => {
     let postData;
@@ -75,14 +76,14 @@
         _id: postId,
         title: title.value,
         content: content.value,
-        categories: selectedCategories.value,
+        categories: selectedCategories.value.length > 0 ? selectedCategories.value : [],
         imagePath: image,
         author: null
       };
     }
   
     try {
-      await postStore.updatePost(postData, postId);
+      await postStore.updateBlogPost(postData, postId);
       router.push('/');
     } catch (error) {
       console.error('Error updating post:', error);

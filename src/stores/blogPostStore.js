@@ -3,6 +3,7 @@ import {
   addPost,
   getAllPosts,
   getPostCategories,
+  getPostsByCategory,
   getSinglePost,
   removePost,
   updatePost,
@@ -49,10 +50,10 @@ export const useBlogPostStore = defineStore("posts", {
         console.error(error);
       }
     },
-    async updatePost(postData, postId) {
+    async updateBlogPost(postData, postId) {
       try {
         const updatedPost = await updatePost(postData, postId);
-        const index = posts.filter((post) => post._id === postId);
+        const index = this.posts.filter((post) => post._id === postId);
         this.posts[index] = updatedPost;
       } catch (error) {
         console.error(error);
@@ -62,6 +63,19 @@ export const useBlogPostStore = defineStore("posts", {
       try {
         await removePost(postId);
         this.posts = this.posts.filter((post) => post._id !== postId);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getPostsByCategory(categoryId, pageSize, page) {
+      try {
+        const categoryData = await getPostsByCategory(
+          categoryId,
+          pageSize,
+          page
+        );
+        this.posts = categoryData.posts;
+        this.totalCount = categoryData.totalCount;
       } catch (error) {
         console.error(error);
       }
