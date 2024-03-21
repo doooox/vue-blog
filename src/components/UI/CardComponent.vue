@@ -2,22 +2,21 @@
     <div class="card-container">
         <h4 class="card-heading">{{ title }}</h4>
         <img :src="image" alt="" class="card-image">
-        <button @click="viewPost">View</button>
-        <button @click="deletePost">X</button>
-        <button @click="updatePost">Edit</button>
+        <div class="button-container">
+            <button @click="deletePost" v-if="user === author">X</button>
+            <button @click="updatePost" v-if="user === author">Edit</button>
+            <button @click="viewPost">View</button>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { defineProps,defineEmits } from 'vue';
+import { useAuthStore } from '@/stores/authStore';
+import { defineProps,defineEmits, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-
 
 const props = defineProps({
     title:{
-        type:String
-    },
-    content:{
         type:String
     },
     postId:{
@@ -26,11 +25,20 @@ const props = defineProps({
     image:{
         type: String
     },
+    author:{
+        type: String
+    },
 });
 
 const router = useRouter();
+const authStore = useAuthStore();
 const emit = defineEmits();
 
+const user = ref(authStore.user); 
+
+watch(() => authStore.user, (currentUser) => {
+    user.value = currentUser; 
+});
 const viewPost = () =>{
     router.push({name:'post', params:{postId: props.postId}})
 };

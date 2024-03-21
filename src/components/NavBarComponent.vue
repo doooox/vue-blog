@@ -5,9 +5,10 @@
         </div>
     <div class="navigation-links-container">
         <div class="navigation-links">
-            <router-link class="link" to="/register">Register</router-link>
-            <router-link class="link" to="/login">Login</router-link>
-            <button @click="logout">Logout</button>
+            <router-link class="link" to="/register" v-if="!user">Register</router-link>
+            <router-link class="link" to="/login" v-if="!user">Login</router-link>
+            <router-link class="link" to="/posts/add" v-if="user">Add Post</router-link>
+            <button @click="logout" v-if="user">Logout</button>
         </div>
     </div>
     </div>
@@ -16,17 +17,26 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/authStore';
-
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const router = useRouter()
+
+const user = ref(null);
+
+watch(()=>authStore.user, (currentUser)=>{
+    user.value = currentUser;
+})
 
 const logout = async () => {
   try {
     await authStore.logoutUser();
+    router.push('/')
   } catch (error) {
     console.error('Logout failed:', error);
   }
-}
+};
 
 </script>
 

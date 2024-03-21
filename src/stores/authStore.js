@@ -48,6 +48,10 @@ export const useAuthStore = defineStore("auth", {
       const token = localStorage.getItem("token");
       if (user && token) this.setUserToLocalStorage(user, token);
     },
+    getUser() {
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+      if (currentUser) this.user = currentUser;
+    },
     setup() {
       this.initializeFromLocalStorage();
     },

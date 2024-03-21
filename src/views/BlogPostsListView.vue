@@ -1,7 +1,13 @@
 <template>
   <div>
     <div v-for="post in posts" :key="post._id" class="container">
-      <CardComponent :title="post.title" :content="post.content" :postId="post._id" :image="post.imagePath" @deletePost="deletePost(post._id)"/>
+      <CardComponent 
+      :title="post.title" 
+      :postId="post._id" 
+      :image="post.imagePath"
+      :author="post.author" 
+      @deletePost="deletePost(post._id)"
+      />
     </div>
     
     <div class="pagination">
@@ -16,14 +22,16 @@ import { useBlogPostStore } from "@/stores/blogPostStore";
 import { onMounted, ref, watch, computed } from "vue";
 import CardComponent from "@/components/UI/CardComponent.vue";
 import { useRoute } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 
 const postStore = useBlogPostStore();
+const authStore = useAuthStore();
 const route = useRoute(); 
 
 const posts = ref([]);
 const currentPage = ref(1);
 const pageSize = 2;
-
+const user = ref(null)
 
 const getPosts = async (categoryId = null) => {
   if (!categoryId) {
@@ -33,13 +41,18 @@ const getPosts = async (categoryId = null) => {
   }
 };
 
+onMounted(async () => {
+  await getPosts(route.params.categoryId);
+  authStore.getUser()
+});
+
+watch(()=> authStore.user, (currentUser)=>{
+    user.value = currentUser
+})
+
 watch(() => route.params.categoryId, async (newCategoryId) => {
   currentPage.value = 1; 
   await getPosts(newCategoryId); 
-});
-
-onMounted(async () => {
-  await getPosts(route.params.categoryId); 
 });
 
 watch(() => postStore.posts, (newPosts) => {
@@ -52,22 +65,18 @@ const deletePost = async (postId) => {
   await getPosts(route.params.categoryId); 
 };
 
-
 const nextPage = async () => {
   currentPage.value++;
   await getPosts(route.params.categoryId); 
 };
-
 
 const prevPage = async () => {
   currentPage.value--;
   await getPosts(route.params.categoryId); 
 };
 
-
 const totalPages = computed(() => Math.ceil(postStore.totalCount / pageSize));
 </script>
-
 
 <style scoped>
 .container {
