@@ -40,8 +40,10 @@
   import { useBlogPostStore } from "@/stores/blogPostStore";
   import { usePostComments } from "@/stores/postCommentsStore";
   import { useAuthStore } from "@/stores/authStore";
+
   import { onMounted, ref, watch } from "vue";
   import { useRoute } from "vue-router";
+  
   import AddCommentComponent from "@/components/AddCommentComponent.vue";
  
   
@@ -92,9 +94,11 @@
   .post-author{
     margin: 1rem 0;
   }
+
   .category-links span {
     margin-right: 10px;
   }
+
   .category-link {
     margin: 1rem 0;
     padding: 0.3rem 0.7rem;
@@ -103,9 +107,11 @@
     border-radius: 5px;
     text-decoration: none;
   }
+
   .category-link:hover {
     background-color: #4f4d4db3;
   }
+
   .post-image {
     margin-bottom: 20px;
   }
@@ -117,6 +123,7 @@
   .comments-section {
     margin-top: 20px;
   }
+
   h2{
     margin-bottom: 1rem;
   }
@@ -128,6 +135,7 @@
     padding: 1rem;
     border-radius: 0.5rem;
   }
+
   .comment p {
     background-color: #cccccc4c;
     border-radius: 0.5rem;

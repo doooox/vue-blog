@@ -5,6 +5,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     token: null,
+    error: null,
   }),
   actions: {
     setUserToLocalStorage(user, token) {
@@ -18,7 +19,8 @@ export const useAuthStore = defineStore("auth", {
         const userData = await registerUser(credentials);
         this.setUserToLocalStorage(userData._id, userData.token);
       } catch (error) {
-        console.error("Registration failed:", error.response.data.message);
+        console.error("Registration failed:", error.response?.data?.message);
+        this.error = await error.response?.data?.message;
         throw error;
       }
     },
@@ -27,7 +29,8 @@ export const useAuthStore = defineStore("auth", {
         const userData = await loginUser(credentials);
         this.setUserToLocalStorage(userData._id, userData.token);
       } catch (error) {
-        console.error("Login failed:", error.response.data.message);
+        console.error("Login failed:", error.response?.data?.message);
+        this.error = await error.response.data.message;
         throw error;
       }
     },
@@ -40,6 +43,7 @@ export const useAuthStore = defineStore("auth", {
         localStorage.removeItem("token");
       } catch (error) {
         console.error("Logout failed:", error.response.data.message);
+        this.error = error.response.data.message;
         throw error;
       }
     },

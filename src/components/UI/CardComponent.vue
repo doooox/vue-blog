@@ -4,9 +4,9 @@
             <h4 class="card-heading">{{ title }}</h4>
             <img :src="image" alt="" class="card-image">
             <div class="button-container">
-                <button @click="viewPost" class="btn-view">View</button>
-                <button @click="updatePost" v-if="user === author" class="btn-edit">Edit</button>
-                <button @click="deletePost" v-if="user === author" class="btn-delete">Delete</button>
+                <ButtonComponent buttonText="View" @click="viewPost" />
+                <ButtonComponent buttonText="Edit" @click="updatePost" v-if="user === author"  buttonType="edit" />
+                <ButtonComponent buttonText="Delete" @click="deletePost" v-if="user === author" buttonType="delete" />
             </div>
         </div>
     </div>
@@ -16,20 +16,13 @@
 import { useAuthStore } from '@/stores/authStore';
 import { defineProps,defineEmits, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import ButtonComponent from './ButtonComponent.vue';
 
 const props = defineProps({
-    title:{
-        type:String
-    },
-    postId:{
-        type:String
-    },
-    image:{
-        type: String
-    },
-    author:{
-        type: String
-    },
+    title:String,
+    postId:String,
+    image:String,
+    author:String
 });
 
 const router = useRouter();
@@ -85,32 +78,5 @@ const updatePost = () =>{
   justify-content: space-around;
 }
 
-button {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 5px;
 
-  cursor: pointer;
-}
-.btn-view{
-    background-color: #007bff;
-    color: #fff;
-}
-.btn-edit{
-    background-color: #38b203;
-    color: #fff;
-}
-.btn-delete{
-    background-color: #ff2600;
-    color: #fff;
-}
-.btn-view:hover {
-  background-color: #0056b3;
-}
-.btn-delete:hover{
-    background-color: #cf2002;
-}
-.btn-edit:hover{
-    background-color: #309006;
-}
 </style>

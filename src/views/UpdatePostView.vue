@@ -6,6 +6,9 @@
       <span>Choose Image:</span>
       <input type="file" @change="handleFileUpload" accept="image/*">
     </label>
+    <div class="image-preview" v-if="imagePreview">
+      <img :src="imagePreview" alt="Selected Image">
+    </div>
     <div class="category-select-container" v-if="categoriesLoaded">
       <label>Select Categories:</label>
       <div class="category-checkboxes">
@@ -14,16 +17,22 @@
           {{ category.name }}
         </label>
       </div>
+      <div v-if="error">
+        <ErrorMessageComponent :error="error"/>
+      </div>
     </div>
-    <button @click="updatePost" class="submit-button">Submit</button>
+    <ButtonComponent @click="updatePost" buttonText="Submit" />
   </div>
 </template>
 
 <script setup>
-import InputComponent from '@/components/UI/InputComponent.vue';
-import { useBlogPostStore } from '@/stores/blogPostStore';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+import { useBlogPostStore } from '@/stores/blogPostStore';
+import ErrorMessageComponent from '@/components/UI/ErrorMessageComponent.vue';
+import ButtonComponent from '@/components/UI/ButtonComponent.vue';
+import InputComponent from '@/components/UI/InputComponent.vue';
 
 const postStore = useBlogPostStore();
 const route = useRoute();
@@ -34,12 +43,21 @@ const categories = ref([]);
 const selectedCategories = ref([]);
 const title = ref('');
 const content = ref('');
+const error = ref(null);
+
 let image = null;
+const imagePreview = ref(null);
 const categoriesLoaded = ref(false);
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
   image = file;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    imagePreview.value = reader.result;
+  };
+  reader.readAsDataURL(file);
 };
 
 const loadCategoriesAndPost = async () => {
@@ -65,7 +83,14 @@ watch(() => postStore.post, (postDetails) => {
   image = postDetails.imagePath;
 });
 
+const invalidForm = () =>{
+  if(selectedCategories === [] || title === '' || content ==='' || image === null) 
+  {return true}
+  else {return false}
+}
+
 const updatePost = async () => {
+  if(invalidForm()) {return error.value = "All Fields Are Required!" }
   let postData;
 
   if (typeof image === 'object') { 
@@ -117,7 +142,10 @@ const updatePost = async () => {
 .file-label span {
   font-weight: bold;
 }
-
+.image-preview img {
+  max-width: 100%;
+  margin-top: 10px;
+}
 .category-select-container {
   margin-bottom: 10px;
 }
@@ -135,18 +163,5 @@ const updatePost = async () => {
 
 .checkbox-label input[type="checkbox"] {
   margin-right: 5px;
-}
-
-.submit-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
 }
 </style>

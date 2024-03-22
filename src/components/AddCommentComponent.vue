@@ -8,16 +8,18 @@
             <div>
                 <InputComponent label="Comment text" type="text" v-model="text"/>
             </div>
-            <button type="submit" class="submit-button">Submit</button>
+            <ButtonComponentVue type="submit" buttonText="Submit"/>
         </form>
     </div>
 </template>
 
 <script setup>
-import { usePostComments } from '@/stores/postCommentsStore';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+
+import { usePostComments } from '@/stores/postCommentsStore';
 import InputComponent from './UI/InputComponent.vue';
+import ButtonComponentVue from './UI/ButtonComponent.vue';
 
 const route = useRoute();
 const commentStore = usePostComments();
@@ -39,16 +41,5 @@ const addNewComment = async () => {
         width: 100%;
         max-width: 80%;
         margin: 0 auto;
-    }
-    .submit-button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .submit-button:hover {
-     background-color: #0056b3;
     }
 </style>

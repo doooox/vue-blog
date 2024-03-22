@@ -17,15 +17,22 @@
         </label>
       </div>
     </div>
-    <button @click="addPost" class="submit-button">Submit</button>
+    <ButtonComponent @click.prevent="addPost"  buttonText="Submit" />
+    <div v-if="error">
+      <ErrorMessageComponent :error="error"/>
+    </div>
   </div>
 </template>
 
 <script setup>
-import InputComponent from '@/components/UI/InputComponent.vue';
-import { useBlogPostStore } from '@/stores/blogPostStore';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { useBlogPostStore } from '@/stores/blogPostStore';
+import ErrorMessageComponent from '@/components/UI/ErrorMessageComponent.vue';
+import ButtonComponent from '@/components/UI/ButtonComponent.vue';
+import InputComponent from '@/components/UI/InputComponent.vue';
+
 
 const postStore = useBlogPostStore();
 const router = useRouter()
@@ -34,6 +41,8 @@ const categories = ref([]);
 const selectedCategories = ref([]);
 const title = ref('');
 const content = ref('');
+const error = ref('');
+
 let image = null;
 const imagePreview = ref(null);
 
@@ -56,7 +65,15 @@ watch(() => postStore.categories, (newCategories) => {
   categories.value = newCategories;
 });
 
+const invalidForm = () =>{
+  if(selectedCategories === [] || title === '' || content ==='' || image === null) 
+  {return true}
+  else {return false}
+}
+
 const addPost = async () => {
+  if(invalidForm()) {return error.value = "All Fields Are Required!" }
+  
   const formData = new FormData();
   formData.append('title', title.value);
   formData.append('content', content.value);
@@ -65,12 +82,8 @@ const addPost = async () => {
   selectedCategories.value.forEach(categoryId => {
     formData.append('categories[]', categoryId);
   });
-  try {
-    await postStore.addBlogPost(formData);
-    router.push('/')
-  } catch (error) {
-    console.error('Error adding post:', error);
-  }
+  await postStore.addBlogPost(formData);
+  router.push('/')
 };
 </script>
 
@@ -99,8 +112,8 @@ const addPost = async () => {
 }
 
 .category-checkbox-container {
-  height: 150px; /* Set fixed height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  height: 150px; 
+  overflow-y: auto; 
   margin-bottom: 10px;
   background-color: #fff;
 }
@@ -118,16 +131,4 @@ const addPost = async () => {
   margin-right: 5px;
 }
 
-.submit-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
 </style>

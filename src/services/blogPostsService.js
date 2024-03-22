@@ -16,17 +16,21 @@ export const getPostCategories = async () => {
   const response = await axiosInstance.get("/categories");
   return response.data;
 };
+
 export const addPost = async (postData) => {
   const response = await axiosInstance.post("/posts/add", postData);
   return response.data;
 };
+
 export const updatePost = async (postData, postId) => {
   const response = await axiosInstance.put(`/posts/update/${postId}`, postData);
   return response.data;
 };
+
 export const removePost = async (postId) => {
   return await axiosInstance.delete(`/posts/delete/${postId}`);
 };
+
 export const getPostsByCategory = async (categoryId, pageSize, page) => {
   const queryParams = `?pageSize=${pageSize}&page=${page}`;
   const response = await axiosInstance.get(

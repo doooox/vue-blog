@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import blogPostListView from "../views/BlogPostsListView.vue";
-import SinglePostView from "../views/SinglePostView.vue";
+
+import { useAuthStore } from "@/stores/authStore";
+import blogPostListView from "@/views/BlogPostsListView.vue";
+import SinglePostView from "@/views/SinglePostView.vue";
 import AuthView from "@/views/AuthView.vue";
 import AddPostView from "@/views/AddPostView.vue";
 import UpdatePostView from "@/views/UpdatePostView.vue";
-import { useAuthStore } from "@/stores/authStore";
+import LogoutComponent from "@/components/LogoutComponent.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,6 +27,12 @@ const router = createRouter({
       name: "login",
       component: AuthView,
       meta: { guestOnly: true },
+    },
+    {
+      path: "/logout",
+      name: "logout",
+      component: LogoutComponent,
+      meta: { requiresAuth: true },
     },
     {
       path: "/posts/add",

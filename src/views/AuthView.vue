@@ -16,10 +16,12 @@
 </template>
 
 <script setup>
+import { watch } from "vue";
 import { useRoute } from "vue-router";
+
 import LoginComponent from "@/components/LoginComponent.vue";
 import RegisterComponent from "@/components/RegisterComponent.vue";
-import { watch } from "vue";
+
 
 const route = useRoute();
 let routeName = route.name;

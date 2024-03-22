@@ -8,7 +8,7 @@
             <router-link class="link" to="/register" v-if="!user">Register</router-link>
             <router-link class="link" to="/login" v-if="!user">Login</router-link>
             <router-link class="link" to="/posts/add" v-if="user">Add Post</router-link>
-            <button @click="logout" v-if="user">Logout</button>
+            <router-link class="link" to="/logout" v-if="user">Logout</router-link>
         </div>
     </div>
     </div>
@@ -37,7 +37,6 @@ const logout = async () => {
     console.error('Logout failed:', error);
   }
 };
-
 </script>
 
 <style scoped>
@@ -68,17 +67,5 @@ const logout = async () => {
         color: white;
         font-size: 1.3rem;
         text-decoration: none;
-    }
-    button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #0056b3;
     }
 </style>

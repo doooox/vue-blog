@@ -3,38 +3,42 @@
       <h2>Login</h2>
       <form @submit.prevent="login">
         <div>
-          <InputComponent label="Email" type="email" v-model="email" />
+          <InputComponent label="Email" type="email" v-model="email"  require="true"/>
         </div>
         <div>
-          <InputComponent label="Password" type="password" v-model="password" />
+          <InputComponent label="Password" type="password" v-model="password" require="true"/>
         </div>
-        <button type="submit" class="submit-button">Login</button>
+        <ButtonComponent type="submit" buttonText="Login"/>
       </form>
-      <p v-if="error">{{ error }}</p>
+      <div v-if="error">
+        <ErrorMessageComponent :error="error"/>
+      </div>
     </div>
   </template>
   
   <script setup>
+  import { ref, watch } from 'vue';
+  import { useRouter } from 'vue-router';
+
   import { useAuthStore } from '@/stores/authStore';
   import InputComponent from "./UI/InputComponent.vue"
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import ErrorMessageComponent from './UI/ErrorMessageComponent.vue';
+  import ButtonComponent from './UI/ButtonComponent.vue';
   
   const authStore = useAuthStore();
   const router = useRouter();
   
   const email = ref('');
   const password = ref('');
-  const error = ref('');
+  const error = ref(null);
+
+  watch(()=>authStore.error, (newError)=>{
+    error.value = newError
+  })
   
   const login = async () => {
-    try {
-      await authStore.loginUser({ email: email.value, password: password.value });
-      router.push('/')
-    } catch (error) {
-      console.error("Login failed:", error.message);
-      error.value = error.message;
-    }
+    await authStore.loginUser({ email: email.value, password: password.value });
+    router.push('/')
   };
   
   </script>
@@ -43,16 +47,4 @@
   h2{
     margin: 2rem;
   }
-  .submit-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
 </style>

@@ -25,11 +25,12 @@
 </template>
 
 <script setup>
-import { useBlogPostStore } from "@/stores/blogPostStore";
 import { onMounted, ref, watch, computed } from "vue";
-import CardComponent from "@/components/UI/CardComponent.vue";
 import { useRoute } from "vue-router";
+
+import { useBlogPostStore } from "@/stores/blogPostStore";
 import { useAuthStore } from "@/stores/authStore";
+import CardComponent from "@/components/UI/CardComponent.vue";
 
 const postStore = useBlogPostStore();
 const authStore = useAuthStore();
@@ -102,7 +103,7 @@ const rows = computed(() => {
 }
 
 .card-container {
-    width: calc(25% - 20px); /* Set the width of each card */
+    width: calc(25% - 20px); 
     margin: 10px;
     padding: 10px;
     border-radius: 5px;
@@ -111,7 +112,6 @@ const rows = computed(() => {
     flex-direction: column;
     align-items: center;
 }
-
 
 .card-heading {
     margin-top: 10px;

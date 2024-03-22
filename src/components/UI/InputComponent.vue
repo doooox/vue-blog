@@ -2,10 +2,10 @@
   <div class="input-container">
     <label class="input-label">{{ label }}</label>
     <template v-if="inputType === 'input'">
-      <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" class="input-field" :type="type" />
+      <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" class="input-field" :type="type" required="require"/>
     </template>
     <template v-else-if="inputType === 'textarea'">
-      <textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" class="textarea-field"></textarea>
+      <textarea :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" class="textarea-field" required="require"></textarea>
     </template>
   </div>
 </template>
@@ -29,7 +29,8 @@ const props = defineProps({
   modelValue: {
     type: [String, Number],
     required: true
-  }
+  },
+  require: Boolean
 });
 </script>
 
@@ -59,9 +60,8 @@ const props = defineProps({
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
-
 .textarea-field {
-  resize: vertical; /* Allow vertical resizing */
-  min-height: 100px; /* Set a minimum height */
+  resize: vertical; 
+  min-height: 100px; 
 }
 </style>
