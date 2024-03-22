@@ -11,12 +11,10 @@
         <div>
           <InputComponent label="Password" type="password" v-model="password" />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" class="submit-button">Register</button>
       </form>
-      
     </div>
   </template>
-  
 
 <script setup>
 import {useAuthStore} from "@/stores/authStore"
@@ -37,5 +35,21 @@ const register = async () =>{
       console.error(error);
     }
 };
-
 </script>
+<style scoped>
+h2{
+    margin: 2rem;
+  }
+  .submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+</style>

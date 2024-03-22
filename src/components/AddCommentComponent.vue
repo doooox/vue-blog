@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <h2>Add Comment</h2>
         <form @submit.prevent="addNewComment">
             <div>
@@ -8,7 +8,7 @@
             <div>
                 <InputComponent label="Comment text" type="text" v-model="text"/>
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit" class="submit-button">Submit</button>
         </form>
     </div>
 </template>
@@ -32,5 +32,23 @@ const addNewComment = async () => {
         console.error(error);
     }
 };
-
 </script>
+
+<style scoped>
+    .container{
+        width: 100%;
+        max-width: 80%;
+        margin: 0 auto;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .submit-button:hover {
+     background-color: #0056b3;
+    }
+</style>

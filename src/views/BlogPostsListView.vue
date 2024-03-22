@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <div v-for="post in posts" :key="post._id" class="container">
-      <CardComponent 
-      :title="post.title" 
-      :postId="post._id" 
-      :image="post.imagePath"
-      :author="post.author" 
-      @deletePost="deletePost(post._id)"
-      />
+  <div class="container" v-if="posts">
+    <div v-for="(row, index) in rows" :key="index" class="row-container" >
+      <div v-for="post in row" :key="post._id" class="card-container" >
+        <CardComponent 
+          :title="post.title" 
+          :postId="post._id" 
+          :image="post.imagePath"
+          :author="post.author" 
+          @deletePost="deletePost(post._id)"
+        />
+      </div>
     </div>
     
     <div class="pagination">
@@ -16,7 +18,12 @@
       <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
   </div>
+
+  <div v-else class="loading">
+      <p>Loading...</p>
+  </div>
 </template>
+
 <script setup>
 import { useBlogPostStore } from "@/stores/blogPostStore";
 import { onMounted, ref, watch, computed } from "vue";
@@ -30,25 +37,25 @@ const route = useRoute();
 
 const posts = ref([]);
 const currentPage = ref(1);
-const pageSize = 2;
-const user = ref(null)
+const pageSize = 10; 
+const user = ref(null);
 
 const getPosts = async (categoryId = null) => {
   if (!categoryId) {
     await postStore.getPosts(pageSize, currentPage.value);
   } else {
-    await postStore.getPostsByCategory(categoryId,pageSize, currentPage.value, );
+    await postStore.getPostsByCategory(categoryId, pageSize, currentPage.value);
   }
 };
 
 onMounted(async () => {
   await getPosts(route.params.categoryId);
-  authStore.getUser()
+  authStore.getUser();
 });
 
-watch(()=> authStore.user, (currentUser)=>{
-    user.value = currentUser
-})
+watch(() => authStore.user, (currentUser) => {
+  user.value = currentUser;
+});
 
 watch(() => route.params.categoryId, async (newCategoryId) => {
   currentPage.value = 1; 
@@ -58,7 +65,6 @@ watch(() => route.params.categoryId, async (newCategoryId) => {
 watch(() => postStore.posts, (newPosts) => {
   posts.value = newPosts;
 });
-
 
 const deletePost = async (postId) => {
   await postStore.deletePost(postId);
@@ -76,22 +82,71 @@ const prevPage = async () => {
 };
 
 const totalPages = computed(() => Math.ceil(postStore.totalCount / pageSize));
+
+const rows = computed(() => {
+  const result = [];
+  for (let i = 0; i < posts.value.length; i += 4) { 
+
+    result.push(posts.value.slice(i, i + 4));
+  }
+  return result;
+});
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: 20px; 
+.row-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.card-container {
+    width: calc(25% - 20px); /* Set the width of each card */
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.card-heading {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.card-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    margin-top: 10px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 .pagination {
-  margin-top: 20px;
+    margin: 0.5rem 2rem;
+    text-align: end;
 }
 
 .pagination button {
-  margin-right: 10px;
+    margin-right: 10px;
 }
 </style>
+
+   

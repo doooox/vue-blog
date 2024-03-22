@@ -44,7 +44,7 @@ const logout = async () => {
     .container{
         height: 6rem;
         width: 100%;
-        background-color: rgb(47, 47, 193);
+        background-color: #212529;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -62,11 +62,23 @@ const logout = async () => {
     .navigation-links{
         display: flex;
         justify-content: space-around;
-        
+        align-items: center;
     }
     .link{
         color: white;
         font-size: 1.3rem;
         text-decoration: none;
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
     }
 </style>

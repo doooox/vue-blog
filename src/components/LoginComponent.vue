@@ -8,7 +8,7 @@
         <div>
           <InputComponent label="Password" type="password" v-model="password" />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" class="submit-button">Login</button>
       </form>
       <p v-if="error">{{ error }}</p>
     </div>
@@ -38,3 +38,21 @@
   };
   
   </script>
+
+<style scoped>
+  h2{
+    margin: 2rem;
+  }
+  .submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+</style>

@@ -1,11 +1,13 @@
 <template>
-    <div class="card-container">
-        <h4 class="card-heading">{{ title }}</h4>
-        <img :src="image" alt="" class="card-image">
-        <div class="button-container">
-            <button @click="deletePost" v-if="user === author">X</button>
-            <button @click="updatePost" v-if="user === author">Edit</button>
-            <button @click="viewPost">View</button>
+    <div class="container">
+        <div class="card-container">
+            <h4 class="card-heading">{{ title }}</h4>
+            <img :src="image" alt="" class="card-image">
+            <div class="button-container">
+                <button @click="viewPost" class="btn-view">View</button>
+                <button @click="updatePost" v-if="user === author" class="btn-edit">Edit</button>
+                <button @click="deletePost" v-if="user === author" class="btn-delete">Delete</button>
+            </div>
         </div>
     </div>
 </template>
@@ -52,42 +54,63 @@ const updatePost = () =>{
 </script>
 
 <style scoped>
-
 .card-container {
-    border: 1px solid black;
-    border-radius: 5px;
-    width: 23%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px; 
-    margin: 10px; 
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .card-heading {
-    margin-top: 10px; 
-    font-size: 18px;
+  font-size: 18px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .card-image {
-    width: 100%;
-    max-height: 200px; 
-    object-fit: contain; 
-    margin-top: 10px; 
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
 }
 
 button {
-    margin-top: 10px;
-    padding: 5px 10px; 
-    background-color: #007bff; 
-    color: white; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer; 
-}
+  padding: 8px 20px;
+  border: none;
+  border-radius: 5px;
 
-button:hover {
-    background-color: #0056b3;
+  cursor: pointer;
 }
-
+.btn-view{
+    background-color: #007bff;
+    color: #fff;
+}
+.btn-edit{
+    background-color: #38b203;
+    color: #fff;
+}
+.btn-delete{
+    background-color: #ff2600;
+    color: #fff;
+}
+.btn-view:hover {
+  background-color: #0056b3;
+}
+.btn-delete:hover{
+    background-color: #cf2002;
+}
+.btn-edit:hover{
+    background-color: #309006;
+}
 </style>
