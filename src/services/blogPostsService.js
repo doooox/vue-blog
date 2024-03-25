@@ -38,3 +38,9 @@ export const getPostsByCategory = async (categoryId, pageSize, page) => {
   );
   return response.data;
 };
+
+export const getSearchedPosts = async (query) => {
+  const queryParams = `?query=${query}`;
+  const response = await axiosInstance.get(`/posts/search${queryParams}`);
+  return response.data;
+};

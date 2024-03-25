@@ -4,6 +4,7 @@ import {
   getAllPosts,
   getPostCategories,
   getPostsByCategory,
+  getSearchedPosts,
   getSinglePost,
   removePost,
   updatePost,
@@ -76,6 +77,14 @@ export const useBlogPostStore = defineStore("posts", {
         );
         this.posts = categoryData.posts;
         this.totalCount = categoryData.totalCount;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getSearchedBlogPosts(query) {
+      try {
+        const postsData = await getSearchedPosts(query);
+        return postsData;
       } catch (error) {
         console.error(error);
       }

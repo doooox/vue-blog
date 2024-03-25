@@ -56,11 +56,19 @@
   const comments = ref(null);
   const postId = route.params.postId;
   const user = ref(authStore.user)
-  
-  onMounted(() => {
+
+  const updatePost = () =>{
+    const postId = route.params.postId;
     postStore.getSinglePost(postId);
     commentStore.getComments(postId);
-  });
+
+  }
+
+  onMounted(updatePost);
+
+  watch(()=> route.params.postId, ()=>{
+    updatePost()
+  })
 
   watch(()=> authStore.user, (currentUser)=>{
     user.value = currentUser

@@ -3,6 +3,9 @@
         <div>
         <router-link class="site-hero" to="/">BLOG APP</router-link>
         </div>
+        <div class="navigation-search">
+            <SearchComponent/>
+        </div>
     <div class="navigation-links-container">
         <div class="navigation-links">
             <router-link class="link" to="/register" v-if="!user">Register</router-link>
@@ -16,9 +19,12 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/authStore';
+
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { useAuthStore } from '@/stores/authStore';
+import SearchComponent from './UI/SearchComponent.vue';
 
 const authStore = useAuthStore();
 const router = useRouter()
