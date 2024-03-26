@@ -44,3 +44,8 @@ export const getSearchedPosts = async (query) => {
   const response = await axiosInstance.get(`/posts/search${queryParams}`);
   return response.data;
 };
+
+export const likePost = async (postId) => {
+  const response = await axiosInstance.put(`posts/like/${postId}`);
+  return response.data;
+};

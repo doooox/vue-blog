@@ -3,11 +3,10 @@
     <div v-for="(row, index) in rows" :key="index" class="row-container">
       <div v-for="post in row" :key="post._id" class="card-container">
         <CardComponent
-          :title="post.title"
+          :post="post"
           :postId="post._id"
-          :image="post.imagePath"
-          :author="post.author"
           @deletePost="deletePost(post._id)"
+          @likePost="likePost"
         />
       </div>
     </div>
@@ -40,7 +39,7 @@ const route = useRoute();
 
 const posts = ref([]);
 const currentPage = ref(1);
-const pageSize = 10;
+const pageSize = 4;
 const user = ref(null);
 
 const getPosts = async (categoryId = null) => {
@@ -80,17 +79,22 @@ watch(
 
 const deletePost = async (postId) => {
   await postStore.deletePost(postId);
-  await getPosts(route.params.categoryId);
+  await getPosts();
+};
+
+const likePost = async (postId) => {
+  await postStore.likeBlogPost(postId);
+  await getPosts();
 };
 
 const nextPage = async () => {
   currentPage.value++;
-  await getPosts(route.params.categoryId);
+  await getPosts();
 };
 
 const prevPage = async () => {
   currentPage.value--;
-  await getPosts(route.params.categoryId);
+  await getPosts();
 };
 
 const totalPages = computed(() => Math.ceil(postStore.totalCount / pageSize));

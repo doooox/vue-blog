@@ -6,6 +6,7 @@ import {
   getPostsByCategory,
   getSearchedPosts,
   getSinglePost,
+  likePost,
   removePost,
   updatePost,
 } from "../services/blogPostsService";
@@ -85,6 +86,13 @@ export const useBlogPostStore = defineStore("posts", {
       try {
         const postsData = await getSearchedPosts(query);
         return postsData;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async likeBlogPost(postId) {
+      try {
+        await likePost(postId);
       } catch (error) {
         console.error(error);
       }
