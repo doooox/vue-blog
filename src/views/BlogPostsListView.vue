@@ -39,7 +39,7 @@ const route = useRoute();
 
 const posts = ref([]);
 const currentPage = ref(1);
-const pageSize = 4;
+const pageSize = 8;
 const user = ref(null);
 
 const getPosts = async (categoryId = null) => {
@@ -74,6 +74,7 @@ watch(
   () => postStore.posts,
   (newPosts) => {
     posts.value = newPosts;
+    console.log(posts);
   }
 );
 
@@ -96,7 +97,6 @@ const prevPage = async () => {
   currentPage.value--;
   await getPosts();
 };
-
 const totalPages = computed(() => Math.ceil(postStore.totalCount / pageSize));
 
 const rows = computed(() => {
@@ -113,7 +113,9 @@ const rows = computed(() => {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  margin-bottom: 20px;
+  width: 100%;
+  max-width: 80%;
+  margin: 1rem auto;
 }
 
 .card-container {
@@ -154,8 +156,12 @@ button:hover {
 }
 
 .pagination {
-  margin: 0.5rem 2rem;
-  text-align: end;
+  width: 50%;
+  max-width: 40%;
+  display: flex;
+  justify-content: space-around;
+  align-items: end;
+  margin: 0 auto;
 }
 
 .pagination button {

@@ -1,12 +1,8 @@
 <template>
   <div class="form-container">
     <InputComponent label="Enter Post Title:" type="text" v-model="title" />
-    <InputComponent
-      label="Enter Post Content:"
-      type="text"
-      v-model="content"
-      input-type="textarea"
-    />
+    <label class="editor-label">Enter Post Content:</label>
+    <JoditEditor v-model="content" />
     <label class="file-label">
       <span>Choose Image:</span>
       <input type="file" @change="handleFileUpload" accept="image/*" />
@@ -30,10 +26,8 @@
           {{ category.name }}
         </label>
       </div>
-      <div v-if="error">
-        <ErrorMessageComponent :error="error" />
-      </div>
     </div>
+    <ErrorMessageComponent v-if="error" :error="error" />
     <ButtonComponent @click="updatePost" buttonText="Submit" />
   </div>
 </template>
@@ -41,7 +35,7 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
+import JoditEditor from "@/components/JoditEditor.vue";
 import { useBlogPostStore } from "@/stores/blogPostStore";
 import ErrorMessageComponent from "@/components/UI/ErrorMessageComponent.vue";
 import ButtonComponent from "@/components/UI/ButtonComponent.vue";
@@ -57,14 +51,14 @@ const selectedCategories = ref([]);
 const title = ref("");
 const content = ref("");
 const error = ref(null);
-
-let image = null;
+const image = ref(null);
 const imagePreview = ref(null);
 const categoriesLoaded = ref(false);
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
-  image = file;
+  if (!file) return;
+  image.value = file;
 
   const reader = new FileReader();
   reader.onload = () => {
@@ -74,14 +68,20 @@ const handleFileUpload = (event) => {
 };
 
 const loadCategoriesAndPost = async () => {
-  await Promise.all([
-    postStore.getCategories(),
-    postStore.getSinglePost(postId),
-  ]);
-  categoriesLoaded.value = true;
+  try {
+    await Promise.all([
+      postStore.getCategories(),
+      postStore.getSinglePost(postId),
+    ]);
+    categoriesLoaded.value = true;
+  } catch (err) {
+    console.error("Failed to load categories or post:", err);
+    error.value = "Failed to load data. Please try again.";
+  }
 };
 
 onMounted(() => {
+  console.log("Post ID:", postId);
   loadCategoriesAndPost();
 });
 
@@ -95,69 +95,68 @@ watch(
 watch(
   () => postStore.post,
   (postDetails) => {
-    title.value = postDetails.title;
-    content.value = postDetails.content;
-    selectedCategories.value = postDetails.categories.map(
-      (category) => category._id
-    );
-    image = postDetails.imagePath;
+    if (postDetails) {
+      title.value = postDetails.title;
+      content.value = postDetails.content;
+      selectedCategories.value = postDetails.categories.map(
+        (category) => category._id
+      );
+      image.value = postDetails.imagePath;
+      imagePreview.value = postDetails.imagePath;
+    }
   }
 );
 
 const invalidForm = () => {
-  if (
-    selectedCategories === [] ||
-    title === "" ||
-    content === "" ||
-    image === null
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  return (
+    !selectedCategories.value.length ||
+    !title.value.trim() ||
+    !content.value.trim() ||
+    !image.value
+  );
 };
 
 const updatePost = async () => {
   if (invalidForm()) {
-    return (error.value = "All Fields Are Required!");
+    error.value = "All fields are required!";
+    return;
   }
-  let postData;
 
-  if (typeof image === "object") {
+  let postData;
+  if (image.value instanceof File) {
     const formData = new FormData();
     formData.append("title", title.value);
     formData.append("content", content.value);
-    formData.append("image", image);
-
-    selectedCategories.value.forEach((categoryId) => {
-      formData.append("categories[]", categoryId);
-    });
-
+    formData.append("image", image.value);
+    selectedCategories.value.forEach((categoryId) =>
+      formData.append("categories[]", categoryId)
+    );
     postData = formData;
   } else {
+    // Keep existing image
     postData = {
       _id: postId,
       title: title.value,
       content: content.value,
-      categories:
-        selectedCategories.value.length > 0 ? selectedCategories.value : [],
-      imagePath: image,
+      categories: selectedCategories.value,
+      imagePath: image.value,
       author: null,
     };
   }
 
   try {
     await postStore.updateBlogPost(postData, postId);
-    router.push("/");
-  } catch (error) {
-    console.error("Error updating post:", error);
+    router.push(`/post/${postId}`);
+  } catch (err) {
+    console.error("Error updating post:", err);
+    error.value = "Failed to update post. Please try again.";
   }
 };
 </script>
 
 <style scoped>
 .form-container {
-  max-width: 500px;
+  max-width: 80%;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -165,34 +164,49 @@ const updatePost = async () => {
   background-color: #f9f9f9;
 }
 
+.editor-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .file-label {
   display: block;
-  margin-bottom: 10px;
+  margin: 20px 0 10px;
 }
 
 .file-label span {
   font-weight: bold;
 }
+
 .image-preview img {
   max-width: 100%;
+  height: auto;
   margin-top: 10px;
+  border-radius: 5px;
 }
+
 .category-select-container {
-  margin-bottom: 10px;
+  margin: 20px 0;
 }
 
 .category-checkboxes {
   max-height: 150px;
   overflow-y: auto;
   margin-top: 5px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .checkbox-label {
-  display: block;
-  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .checkbox-label input[type="checkbox"] {
-  margin-right: 5px;
+  margin-right: 8px;
 }
 </style>

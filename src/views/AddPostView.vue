@@ -1,11 +1,10 @@
 <template>
   <div class="form-container">
     <InputComponent label="Enter Post Title:" type="text" v-model="title" />
-    <InputComponent
-      label="Enter Post Content:"
-      v-model="content"
-      input-type="textarea"
-    />
+
+    <label class="editor-label">Enter Post Content:</label>
+    <JoditEditor v-model="content" />
+
     <label class="file-label">
       <span>Choose Image:</span>
       <input
@@ -15,9 +14,11 @@
         accept="image/*"
       />
     </label>
+
     <div class="image-preview" v-if="imagePreview">
       <img :src="imagePreview" alt="Selected Image" />
     </div>
+
     <div class="category-checkbox-container">
       <div class="category-checkboxes">
         <label
@@ -34,10 +35,9 @@
         </label>
       </div>
     </div>
+
     <ButtonComponent @click.prevent="addPost" buttonText="Submit" />
-    <div v-if="error">
-      <ErrorMessageComponent :error="error" />
-    </div>
+    <ErrorMessageComponent v-if="error" :error="error" />
   </div>
 </template>
 
@@ -49,6 +49,7 @@ import { useBlogPostStore } from "@/stores/blogPostStore";
 import ErrorMessageComponent from "@/components/UI/ErrorMessageComponent.vue";
 import ButtonComponent from "@/components/UI/ButtonComponent.vue";
 import InputComponent from "@/components/UI/InputComponent.vue";
+import JoditEditor from "@/components/JoditEditor.vue";
 
 const postStore = useBlogPostStore();
 const router = useRouter();
@@ -58,58 +59,44 @@ const selectedCategories = ref([]);
 const title = ref("");
 const content = ref("");
 const error = ref("");
-
-let image = null;
 const imagePreview = ref(null);
+let image = null;
 
-const handleFileUpload = (event) => {
-  const file = event.target.files[0];
+const handleFileUpload = ({ target }) => {
+  const file = target.files[0];
+  if (!file) return;
   image = file;
 
   const reader = new FileReader();
-  reader.onload = () => {
-    imagePreview.value = reader.result;
-  };
+  reader.onload = () => (imagePreview.value = reader.result);
   reader.readAsDataURL(file);
 };
 
-onMounted(() => {
-  postStore.getCategories();
-});
+onMounted(() => postStore.getCategories());
 
 watch(
   () => postStore.categories,
-  (newCategories) => {
-    categories.value = newCategories;
-  }
+  (val) => (categories.value = val)
 );
 
-const invalidForm = () => {
-  if (
-    selectedCategories === [] ||
-    title === "" ||
-    content === "" ||
-    image === null
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-};
+const invalidForm = () =>
+  !selectedCategories.value.length ||
+  !title.value.trim() ||
+  !content.value.trim() ||
+  !image;
 
 const addPost = async () => {
   if (invalidForm()) {
-    return (error.value = "All Fields Are Required!");
+    error.value = "All Fields Are Required!";
+    return;
   }
 
   const formData = new FormData();
   formData.append("title", title.value);
   formData.append("content", content.value);
   formData.append("image", image);
+  selectedCategories.value.forEach((id) => formData.append("categories[]", id));
 
-  selectedCategories.value.forEach((categoryId) => {
-    formData.append("categories[]", categoryId);
-  });
   await postStore.addBlogPost(formData);
   router.push("/");
 };
@@ -117,7 +104,7 @@ const addPost = async () => {
 
 <style scoped>
 .form-container {
-  max-width: 500px;
+  max-width: 50%;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
